@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmbatuOps Technology | Intelligent Future</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        /* --- 1. CONFIGURATION & THEMES --- */
+        :root {
+            /* DARK MODE (Default) */
+            --bg-deep: #050507;
+            --bg-surface: #0f1014;
+            --bg-glass: rgba(15, 16, 20, 0.85);
+            --primary: #3b82f6;
+            --accent: #06b6d4;
+            --text-main: #ffffff;
+            --text-muted: #e2e8f0; 
+            --border-color: rgba(255, 255, 255, 0.15);
+            --cursor-color: rgba(59, 130, 246, 0.5);
+            --code-bg: #0d1117;
+            --footer-bg: #000000;
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --input-text: #fff;
+            --icon-glow: rgba(59, 130, 246, 0.4);
+        }
+
+        [data-theme="light"] {
+            /* Light Mode */
+            --bg-deep: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-glass: rgba(255, 255, 255, 0.9);
+            --primary: #2563eb;
+            --accent: #0891b2;
+            --text-main: #0f172a;
+            --text-muted: #475569; 
+            --border-color: rgba(0, 0, 0, 0.1);
+            --cursor-color: rgba(37, 99, 235, 0.3);
+            --code-bg: #1e293b; 
+            --footer-bg: #f1f5f9;
+            --input-bg: #e2e8f0;
+            --input-text: #0f172a;
+            --icon-glow: rgba(37, 99, 235, 0.2);
+        }
+
+        /* --- 2. GLOBAL RESET & FIXES --- */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            cursor: none; 
+        }
+
+        /* PRELOADER */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-deep);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: 'JetBrains Mono', monospace;
+            transition: opacity 0.8s ease-out, visibility 0.8s;
+        }
+        
+        .loader-content { text-align: center; width: 300px; }
+        .loader-text {
+            color: var(--text-main); font-size: 1rem; margin-bottom: 1rem;
+            letter-spacing: 1px; text-transform: uppercase; font-weight: 600;
+        }
+        .loader-bar {
+            width: 100%; height: 4px; background: var(--border-color);
+            border-radius: 4px; overflow: hidden; position: relative; margin-bottom: 1rem;
+        }
+        .loader-progress {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            box-shadow: 0 0 15px var(--primary);
+            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .loader-log { color: var(--text-muted); font-size: 0.75rem; height: 20px; opacity: 0.8; }
+        body.loading { overflow: hidden; }
+
+        p, .text-muted, .small { color: var(--text-muted) !important; font-weight: 400; }
+        h1, h2, h3, h4, h5, h6, .text-main { color: var(--text-main) !important; }
+
+        @media (hover: none) { body { cursor: auto; } .custom-cursor { display: none; } }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+            border: 2px solid var(--primary); border-radius: 50%; pointer-events: none;
+            z-index: 9999; transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: difference;
+        }
+        .custom-cursor.hovered {
+            width: 50px; height: 50px; background-color: var(--cursor-color);
+            border-color: transparent; mix-blend-mode: normal;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* --- 3. UI COMPONENTS --- */
+
+        /* Navbar */
+        .navbar { padding: 1.5rem 0; transition: all 0.3s ease; }
+        .nav-glass {
+            background: var(--bg-glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 100px;
+            padding: 0.6rem 2rem; transition: all 0.3s;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); width: 100%;
+        }
+        .nav-link { 
+            color: var(--text-muted) !important; font-weight: 500; font-size: 0.95rem;
+            transition: 0.3s; position: relative; margin: 0 8px;
+        }
+        .nav-link:hover { color: var(--primary) !important; }
+
+        .nav-theme-btn {
+            background: transparent; border: 1px solid var(--border-color);
+            color: var(--text-main); width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; margin-right: 10px; cursor: none;
+        }
+        .nav-theme-btn:hover { background: var(--bg-surface); border-color: var(--primary); color: var(--primary); }
+
+        .btn-glow {
+            background: var(--text-main); color: var(--bg-deep); border-radius: 50px;
+            padding: 0.7rem 2rem; font-weight: 700; border: none; 
+            transition: transform 0.3s; display: inline-flex; align-items: center; justify-content: center;
+            text-decoration: none !important; white-space: nowrap;
+        }
+        .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px var(--cursor-color); }
+
+        /* Hero */
+        #hero { position: relative; min-height: 100vh; display: flex; align-items: center; padding-top: 80px; }
+        .scramble-text { min-height: 1.2em; display: inline-block; }
+
+        /* --- CARDS & ICONS --- */
+        .glass-card {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 2.5rem; transform-style: preserve-3d;
+            transform: perspective(1000px); transition: border-color 0.3s, background 0.3s;
+            height: 100%; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .glass-card:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+        
+        .icon-box {
+            width: 80px; height: 80px; border-radius: 50%; background: var(--bg-deep);
+            display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+            position: relative; border: 1px solid var(--border-color);
+            transform-style: preserve-3d; transform: translateZ(20px);
+            box-shadow: 0 0 20px var(--icon-glow); flex-shrink: 0;
+        }
+        .icon-box::before {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            border-radius: 50%; border: 2px dashed var(--primary); top: 0; left: 0;
+            animation: spin 10s linear infinite; opacity: 0.5;
+        }
+        .icon-box::after {
+            content: ''; position: absolute; width: 110%; height: 110%;
+            border-radius: 50%; border: 1px solid var(--accent); opacity: 0.3;
+            animation: pulse-ring 3s ease-out infinite;
+        }
+        .icon-inner {
+            font-size: 2.5rem; background: linear-gradient(135deg, var(--accent), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: float 4s ease-in-out infinite; filter: drop-shadow(0 0 5px var(--primary));
+        }
+        .glass-card:hover .icon-box::before { animation-duration: 3s; border-color: var(--accent); }
+        .glass-card:hover .icon-inner { transform: scale(1.1); }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.3); opacity: 0; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        .card-title { transform: translateZ(30px); margin-bottom: 1rem; }
+        .card-desc { transform: translateZ(20px); opacity: 1; color: var(--text-muted) !important; }
+
+        /* Terminal */
+        .terminal {
+            background: var(--code-bg); border-radius: 12px; border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5); font-family: 'JetBrains Mono', monospace;
+            overflow: hidden; transform: translateZ(50px);
+        }
+        .terminal-header { background: rgba(255,255,255,0.05); padding: 12px; display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .terminal-body { padding: 20px; font-size: 0.85rem; color: #a5b3ce; }
+        .terminal-filename { color: #cbd5e1 !important; font-weight: 500; }
+        .blink { animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Marquee */
+        .marquee-wrap {
+            background: var(--bg-surface); border-y: 1px solid var(--border-color);
+            padding: 3rem 0; overflow: hidden; white-space: nowrap;
+        }
+        .marquee-inner { display: inline-block; animation: scroll 40s linear infinite; }
+        .tech-item {
+            display: inline-flex; align-items: center; gap: 10px; font-size: 1.5rem;
+            font-weight: 600; color: var(--text-muted); margin: 0 3rem; filter: grayscale(1);
+            transition: 0.4s; cursor: none;
+        }
+        .tech-item:hover { filter: grayscale(0); color: var(--primary); transform: scale(1.1); }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- TEAM CARDS SOCIAL REVEAL (FIXED ROUND OVERLAY) --- */
+        .team-img-box {
+            width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem;
+            overflow: hidden; border: 3px solid var(--border-color); transition: 0.3s;
+            position: relative;
+        }
+        .glass-card:hover .team-img-box { border-color: var(--primary); transform: scale(1.05); }
+
+        /* Social Overlay Style - FIXED ROUND SHAPE */
+        .team-social-overlay {
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            
+            /* INI BAGIAN PENTINGNYA: MEMBUAT OVERLAY JADI LINGKARAN */
+            border-radius: 50%; 
+        }
+        
+        /* Show on hover */
+        .team-img-box:hover .team-social-overlay,
+        .glass-card:hover .team-social-overlay {
+            bottom: 0;
+        }
+
+        .social-btn {
+            color: #fff !important; font-size: 1.2rem; transition: transform 0.2s, color 0.2s;
+        }
+        .social-btn:hover { color: var(--primary) !important; transform: scale(1.2); }
+
+        /* Footer */
+        footer { background: var(--footer-bg); padding: 5rem 0 2rem; border-top: 1px solid var(--border-color); }
+        .footer-input {
+            background: var(--input-bg); border: 1px solid var(--border-color);
+            color: var(--input-text); padding: 12px;
+        }
+        .footer-input:focus { outline: none; border-color: var(--primary); }
+        .footer-input::placeholder { color: rgba(150,150,150,0.5); }
+
+        /* Canvas Background */
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 1; }
+
+        /* --- RESPONSIVE FIXES --- */
+        @media (max-width: 991px) {
+            .navbar { padding: 1rem 0; }
+            .nav-glass { padding: 0.8rem 1.5rem; border-radius: 20px; }
+            #hero { padding-top: 120px; text-align: center; } 
+            .hero-content { display: flex; flex-direction: column; align-items: center; }
+            h1.display-3 { font-size: 2.8rem; } 
+            .terminal { margin-top: 3rem; }
+            .glass-card { padding: 2rem 1.5rem; }
+            .tech-item { font-size: 1.2rem; margin: 0 1.5rem; }
+            section { padding: 3rem 0; } 
+            footer { padding-top: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="loader-text">INITIALIZING AMBATU_OPS</div>
+            <div class="loader-bar">
+                <div class="loader-progress" id="progress"></div>
+            </div>
+            <div class="loader-log" id="loader-log">Fetching cloud nodes...</div>
+        </div>
+    </div>
+
+    <div class="custom-cursor" id="cursor"></div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <nav class="navbar fixed-top">
+        <div class="container d-flex justify-content-center">
+            <div class="nav-glass d-flex align-items-center justify-content-between" style="max-width: 1000px;">
+                <a class="navbar-brand fw-bold hover-target" href="#" style="color: var(--text-main); font-size: 1.3rem;">
+                    AmbatuOps<span class="text-primary">.</span>
+                </a>
+                
+                <div class="d-none d-lg-flex gap-3 align-items-center">
+                    <a class="nav-link hover-target" href="#about">Philosophy</a>
+                    <a class="nav-link hover-target" href="#services">Solutions</a>
+                    <a class="nav-link hover-target" href="#team">Leadership</a>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <button class="nav-theme-btn hover-target" id="themeToggle" title="Switch Theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <a href="#contact" class="btn-glow hover-target ms-2">Let's Talk</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 hero-content" data-aos="fade-up" data-aos-duration="1000">
+                    <div class="d-inline-block px-3 py-1 rounded-pill border border-secondary mb-4 text-primary small fw-bold">
+                        <i class="fas fa-circle fa-xs me-2 blink"></i>SYSTEM ONLINE
+                    </div>
+                    <h1 class="display-3 mb-4 fw-bold">
+                        We Build <br>
+                        <span class="text-gradient scramble-target">Intelligent Future</span>
+                    </h1>
+                    <p class="lead mb-5" style="max-width: 500px;">
+                        AmbatuOps memberdayakan bisnis Asia Tenggara melalui fusi Artificial Intelligence dan Cybersecurity tingkat militer yang adaptif.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                        <a href="#services" class="btn-glow hover-target">Explore Solutions</a>
+                        <button class="btn btn-outline-secondary rounded-pill px-4 py-3 hover-target" style="color: var(--text-main); border-color: var(--border-color);">
+                            Documentation
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-lg-5" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="terminal js-tilt-glare" data-tilt>
+                        <div class="terminal-header">
+                            <div class="dot" style="background:#ff5f56"></div>
+                            <div class="dot" style="background:#ffbd2e"></div>
+                            <div class="dot" style="background:#27c93f"></div>
+                            <span class="small terminal-filename ms-2">ambatu_guard.exe</span>
+                        </div>
+                        <div class="terminal-body">
+                            <div><span style="color:#c678dd">import</span> security_core</div>
+                            <div><span style="color:#c678dd">import</span> ai_neural_net</div>
+                            <br>
+                            <div><span style="color:#e5c07b">def</span> <span style="color:#61afef">init_defense</span>():</div>
+                            <div>&nbsp;&nbsp;threats = security_core.<span style="color:#56b6c2">scan_network()</span></div>
+                            <div>&nbsp;&nbsp;<span style="color:#c678dd">if</span> threats:</div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;ai_neural_net.<span style="color:#e06c75">eliminate</span>(threats)</div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#56b6c2">print</span>(<span style="color:#98c379">"System Secured."</span>)</div>
+                            <br>
+                            <div class="text-success">>> Protection Active...<span class="blink">|</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="marquee-wrap">
+        <div class="marquee-inner hover-target">
+            <span class="tech-item"><i class="fab fa-aws"></i> AWS Cloud</span>
+            <span class="tech-item"><i class="fab fa-docker"></i> Docker</span>
+            <span class="tech-item"><i class="fab fa-python"></i> Python</span>
+            <span class="tech-item"><i class="fab fa-google"></i> Google Cloud</span>
+            <span class="tech-item"><i class="fab fa-linux"></i> RedHat Linux</span>
+            <span class="tech-item"><i class="fas fa-shield-alt"></i> CrowdStrike</span>
+            <span class="tech-item"><i class="fab fa-aws"></i> AWS Cloud</span>
+            <span class="tech-item"><i class="fab fa-docker"></i> Docker</span>
+            <span class="tech-item"><i class="fab fa-python"></i> Python</span>
+            <span class="tech-item"><i class="fab fa-google"></i> Google Cloud</span>
+            <span class="tech-item"><i class="fab fa-linux"></i> RedHat Linux</span>
+            <span class="tech-item"><i class="fas fa-shield-alt"></i> CrowdStrike</span>
+        </div>
+    </div>
+
+    <section id="about" class="py-5 my-5">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8" data-aos="fade-up">
+                    <span class="text-primary fw-bold tracking-wider small">OUR PHILOSOPHY</span>
+                    <h2 class="display-5 mt-2 mb-4">"Kecerdasan Terjamin.<br>Operasi Tepat Guna."</h2>
+                    <p class="lead">
+                        AmbatuOps menyalurkan inovasi teknologi yang cerdas dan terjamin keamanannya untuk memastikan operasi bisnis klien mencapai potensi tertingginya.
+                    </p>
+                    <div class="row mt-5 g-4">
+                        <div class="col-md-4">
+                            <h5 class="text-main">Visi</h5>
+                            <p class="small text-muted">Menjadi perusahaan teknologi terkemuka di Asia Tenggara.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-main">Misi</h5>
+                            <p class="small text-muted">Inovasi solusi, keunggulan operasi, dan pengembangan SDM.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-main">Tujuan</h5>
+                            <p class="small text-muted">Security Leader untuk SME & Ekspansi Pasar SaaS.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-5">
+        <div class="container">
+            <h3 class="mb-5 text-center">Our Solutions</h3>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                    <div class="glass-card hover-target" data-tilt data-tilt-max="10" data-tilt-speed="400">
+                        <div class="icon-box">
+                            <i class="fas fa-brain icon-inner"></i>
+                        </div>
+                        <h4 class="card-title">Inovasi Solusi AI</h4>
+                        <p class="card-desc">Mengembangkan teknologi AI inovatif untuk otomatisasi cerdas dan efisiensi level tinggi.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card hover-target" data-tilt data-tilt-max="10" data-tilt-speed="400">
+                        <div class="icon-box">
+                            <i class="fas fa-lock icon-inner"></i>
+                        </div>
+                        <h4 class="card-title">Cybersecurity Elite</h4>
+                        <p class="card-desc">Perlindungan aset digital dengan standar keamanan siber internasional. Zero-trust architecture.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card hover-target" data-tilt data-tilt-max="10" data-tilt-speed="400">
+                        <div class="icon-box">
+                            <i class="fas fa-rocket icon-inner"></i>
+                        </div>
+                        <h4 class="card-title">SaaS Expansion</h4>
+                        <p class="card-desc">Meluncurkan produk Software as a Service berbasis AI untuk pasar Asia Tenggara.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 border-top border-bottom" style="border-color: var(--border-color) !important; background: var(--bg-surface);">
+        <div class="container">
+            <div class="row g-4 text-center">
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="0">
+                    <div class="d-flex justify-content-center align-items-baseline">
+                        <div class="display-4 fw-bold text-gradient mb-0 counter" data-target="99">0</div>
+                        <span class="text-primary small fw-bold ms-1">%</span>
+                    </div>
+                    <p class="small text-muted mt-2 text-uppercase tracking-wider">Uptime Guarantee</p>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="d-flex justify-content-center align-items-baseline">
+                        <div class="display-4 fw-bold text-gradient mb-0 counter" data-target="500">0</div>
+                        <span class="text-primary small fw-bold ms-1">+</span>
+                    </div>
+                    <p class="small text-muted mt-2 text-uppercase tracking-wider">Enterprise Clients</p>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="d-flex justify-content-center align-items-baseline">
+                        <div class="display-4 fw-bold text-gradient mb-0 counter" data-target="10">0</div>
+                        <span class="text-primary small fw-bold ms-1">M+</span>
+                    </div>
+                    <p class="small text-muted mt-2 text-uppercase tracking-wider">Threats Blocked</p>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="d-flex justify-content-center align-items-baseline">
+                        <div class="display-4 fw-bold text-gradient mb-0 counter" data-target="24">0</div>
+                        <span class="text-primary small fw-bold ms-1">/7</span>
+                    </div>
+                    <p class="small text-muted mt-2 text-uppercase tracking-wider">AI Monitoring</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="py-5 my-5">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">Executive Leadership</h2>
+            <div class="row g-4 justify-content-center">
+                
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
+                        <div class="team-img-box">
+                            <img src="ro.jpeg" class="w-100 h-100 object-fit-cover">
+                            <div class="team-social-overlay">
+                                <a href="https://www.linkedin.com/in/rois-azzam-shiddiq-73a81735a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                                <a href="https://github.com/Roisazzshid" class="social-btn"><i class="fab fa-github"></i></a>
+                                <a href="https://www.instagram.com/issa.5_?igsh=MTg3b3d4d2M3MGwxYw%3D%3D" class="social-btn"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <h5>Rois Azzam Shiddiq</h5>
+                        <p class="text-primary small fw-bold mb-2">Chief Executive Officer</p>
+                        <p class="small text-muted">Memimpin strategi, visi, dan pertumbuhan bisnis secara keseluruhan.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="150">
+                    <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
+                        <div class="team-img-box">
+                            <img src="ka.jpeg" class="w-100 h-100 object-fit-cover">
+                            <div class="team-social-overlay">
+                                <a href="https://www.linkedin.com/in/muhammad-kamil-nf/" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                                <a href="https://www.instagram.com/kamil_kamachiii" class="social-btn"><i class="fab fa-github"></i></a>
+                                <a href="https://github.com/kamachiii" class="social-btn"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <h5>Muhammad Kamil</h5>
+                        <p class="text-info small fw-bold mb-2">Chief Technology Officer</p>
+                        <p class="small text-muted">Mengawasi pengembangan teknologi & arsitektur produk.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
+                        <div class="team-img-box">
+                            <img src="rk.jpeg" class="w-100 h-100 object-fit-cover">
+                            <div class="team-social-overlay">
+                                <a href="https://www.linkedin.com/in/raka-dwi-randika-a856b433a/" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                                <a href="https://github.com/RakaDr" class="social-btn"><i class="fab fa-github"></i></a>
+                                <a href="https://www.instagram.com/rakaa_dr/" class="social-btn"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <h5>Raka Dwi Randika</h5>
+                        <p class="text-warning small fw-bold mb-2">Chief Operating Officer</p>
+                        <p class="small text-muted">Mengelola operasional harian dan efisiensi internal.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+                    <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
+                        <div class="team-img-box">
+                            <img src="bi.jpg" class="w-100 h-100 object-fit-cover">
+                            <div class="team-social-overlay">
+                                <a href="" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                                <a href="" class="social-btn"><i class="fab fa-github"></i></a>
+                                <a href="https://www.instagram.com/mhmdbilalfath/" class="social-btn"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <h5>Muhamad Bilal Fatiha</h5>
+                        <p class="text-success small fw-bold mb-2">Chief Product Officer</p>
+                        <p class="small text-muted">Bertanggung jawab atas strategi produk dan peluncuran.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
+                        <div class="team-img-box">
+                            <img src="za.jpeg" class="w-100 h-100 object-fit-cover">
+                            <div class="team-social-overlay">
+                                <a href="https://www.linkedin.com/in/zaidaan-salman-saffiq-9622963a3/" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                                <a href="https://github.com/zaidaansalman" class="social-btn"><i class="fab fa-github"></i></a>
+                                <a href="https://www.instagram.com/zdnsalmn_?igsh=cTJld3l2ZDYwZjJj" class="social-btn"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <h5>Zaidaan Salman</h5>
+                        <p class="text-danger small fw-bold mb-2">Head of Business Dev</p>
+                        <p class="small text-muted">Fokus pada kemitraan strategis dan akuisisi klien.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="350">
+                    <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
+                        <div class="team-img-box">
+                            <img src="sy.jfif" class="w-100 h-100 object-fit-cover">
+                            <div class="team-social-overlay">
+                                <a href="https://www.linkedin.com/in/muhammad-hisyam-alfaris-61189032b/" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                                <a href="https://github.com/Kavleri" class="social-btn"><i class="fab fa-github"></i></a>
+                                <a href="https://www.instagram.com/muhammadhisyamalfaris33?igsh=b3I0bnNvbmZjdGow" class="social-btn"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <h5>M. Hisyam Alfaris</h5>
+                        <p class="text-primary small fw-bold mb-2">Head of Cybersecurity</p>
+                        <p class="small text-muted">Spesialis keamanan siber dan solusi konsultasi.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-5">
+                    <h4 class="mb-4">AmbatuOps<span class="text-primary">.</span></h4>
+                    <p class="small text-muted">Cinere, Depok, Indonesia.<br>Pioneering the future of secure cloud computing.</p>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="mb-3">Connect</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted fs-5 hover-target"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-muted fs-5 hover-target"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-muted fs-5 hover-target"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <h6 class="mb-3">Newsletter</h6>
+                    <div class="input-group">
+                        <input type="email" class="form-control footer-input" placeholder="Your email...">
+                        <button class="btn btn-primary hover-target">Join</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top border-secondary mt-5 pt-4 text-center text-muted small">
+                &copy; 2025 AmbatuOps Technology. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+
+    <script>
+        // 1. INIT LIBRARIES
+        AOS.init({ once: true, duration: 1000, offset: 50 });
+
+        // 2. PRELOADER LOGIC
+        const preloader = document.getElementById('preloader');
+        const progressBar = document.getElementById('progress');
+        const logText = document.getElementById('loader-log');
+        const body = document.body;
+
+        body.classList.add('loading');
+
+        const logs = [
+            "Initializing Neural Core...",
+            "Handshaking with Cloud Nodes...",
+            "Verifying Security Protocols...",
+            "Loading AmbatuOps Interface..."
+        ];
+
+        let step = 0;
+        const totalTime = 2000; 
+        const intervalTime = totalTime / logs.length;
+
+        const loadInterval = setInterval(() => {
+            if (step < logs.length) {
+                logText.innerText = "> " + logs[step];
+                const percentage = ((step + 1) / logs.length) * 100;
+                progressBar.style.width = percentage + "%";
+                step++;
+            } else {
+                clearInterval(loadInterval);
+                finishLoading();
+            }
+        }, intervalTime);
+
+        function finishLoading() {
+            setTimeout(() => {
+                preloader.style.opacity = "0";
+                preloader.style.visibility = "hidden";
+                body.classList.remove('loading');
+                AOS.refresh(); 
+            }, 500);
+        }
+
+        // 3. CUSTOM CURSOR
+        const cursor = document.getElementById('cursor');
+        const hoverTargets = document.querySelectorAll('.hover-target, a, button');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            target.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // 4. TEXT SCRAMBLE
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.update = this.update.bind(this);
+            }
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise((resolve) => this.resolve = resolve);
+                this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end });
+                }
+                cancelAnimationFrame(this.frameRequest);
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+            update() {
+                let output = '';
+                let complete = 0;
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+                    if (this.frame >= end) {
+                        complete++;
+                        output += to;
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.randomChar();
+                            this.queue[i].char = char;
+                        }
+                        output += `<span class="dud">${char}</span>`;
+                    } else {
+                        output += from;
+                    }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) {
+                    this.resolve();
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update);
+                    this.frame++;
+                }
+            }
+            randomChar() {
+                return this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+        }
+
+        const el = document.querySelector('.scramble-target');
+        const fx = new TextScramble(el);
+        let phrases = ['Intelligent Future', 'Secure Operation', 'Digital Agility'];
+        let counter = 0;
+        
+        const nextPhrase = () => {
+            fx.setText(phrases[counter]).then(() => {
+                setTimeout(nextPhrase, 2000);
+            });
+            counter = (counter + 1) % phrases.length;
+        };
+        setTimeout(nextPhrase, 1000);
+
+        // 5. ANIMATED COUNTERS (STATS)
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        let hasCounted = false;
+        const statsSection = document.querySelector('.counter')?.closest('section');
+        
+        if(statsSection) {
+            const observer = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting && !hasCounted) {
+                    animateCounters();
+                    hasCounted = true;
+                }
+            }, { threshold: 0.5 });
+            
+            observer.observe(statsSection);
+        }
+
+        // 6. THEME & ADVANCED PARTICLES
+        const html = document.documentElement;
+        const toggleBtn = document.getElementById('themeToggle');
+        const icon = toggleBtn.querySelector('i');
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Load Saved Theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        updateUI(savedTheme);
+
+        toggleBtn.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateUI(newTheme);
+            initParticles(newTheme);
+        });
+
+        function updateUI(theme) {
+            if(theme === 'light') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // --- PARTICLE SYSTEM UPDATE (CONSTANT MOTION) ---
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles(html.getAttribute('data-theme'));
+        });
+
+        class Particle {
+            constructor(x, y, size, color) {
+                this.x = x; this.y = y; this.size = size; this.color = color;
+                this.baseX = x; this.baseY = y;
+                this.density = (Math.random() * 30) + 1;
+                this.speedX = (Math.random() * 0.5) - 0.25; 
+                this.speedY = (Math.random() * 0.5) - 0.25;
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color; ctx.fill();
+            }
+            update(mouse) {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+                let maxDistance = 120;
+                
+                if (distance < maxDistance) {
+                    let forceDirectionX = dx / distance;
+                    let forceDirectionY = dy / distance;
+                    let force = (maxDistance - distance) / maxDistance;
+                    let directionX = forceDirectionX * force * this.density;
+                    let directionY = forceDirectionY * force * this.density;
+                    
+                    this.x -= directionX;
+                    this.y -= directionY;
+                }
+            }
+        }
+
+        const mouseObj = { x: null, y: null };
+        window.addEventListener('mousemove', (e) => {
+            mouseObj.x = e.x; mouseObj.y = e.y;
+        });
+
+        function initParticles(theme) {
+            particlesArray = [];
+            let pColor = theme === 'dark' ? 'rgba(0, 242, 255, 0.6)' : 'rgba(37, 99, 235, 0.4)';
+            let numberOfParticles = (canvas.height * canvas.width) / 10000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let x = Math.random() * canvas.width;
+                let y = Math.random() * canvas.height;
+                let size = (Math.random() * 2.5) + 1;
+                particlesArray.push(new Particle(x, y, size, pColor));
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].draw();
+                particlesArray[i].update(mouseObj);
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+
+        initParticles(savedTheme);
+        animateCanvas();
+
+    </script>
+</body>
+</html>
