@@ -31,6 +31,8 @@
             --input-bg: rgba(255, 255, 255, 0.1);
             --input-text: #fff;
             --icon-glow: rgba(59, 130, 246, 0.4);
+            --placeholder-color: #cbd5e1;
+            --select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
         }
 
         [data-theme="light"] {
@@ -49,6 +51,8 @@
             --input-bg: #e2e8f0;
             --input-text: #0f172a;
             --icon-glow: rgba(37, 99, 235, 0.2);
+            --placeholder-color: #64748b;
+            --select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
         }
 
         /* --- 2. GLOBAL RESET & FIXES --- */
@@ -289,13 +293,121 @@
             section { padding: 3rem 0; } 
             footer { padding-top: 3rem; }
         }
+
+        /* --- NEW: CLIENT LOGOS GRID --- */
+        .client-logo-item {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            opacity: 0.5;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+        }
+        .client-logo-item:hover {
+            color: var(--text-main);
+            opacity: 1;
+            transform: scale(1.1);
+            text-shadow: 0 0 15px var(--primary);
+        }
+
+        /* --- NEW: CONTACT FORM STYLING --- */
+        .form-glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            color: var(--text-main);
+            transition: all 0.3s;
+        }
+        .form-glass:focus {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+            outline: none;
+        }
+        .form-glass::placeholder { color: var(--placeholder-color) !important; opacity: 0.8; }
+        
+
+        .form-glass option {
+            background-color: var(--bg-surface); /* Hitam di Dark Mode, Putih di Light Mode */
+            color: var(--text-main);
+        }
+
+        select.form-glass {
+    /* 1. Ambil gambar panah dari variabel */
+    background-image: var(--select-arrow);
+    
+    /* 2. Atur posisi di kanan, tengah secara vertikal */
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    
+    /* 3. Hapus panah bawaan browser */
+    appearance: none; 
+    -webkit-appearance: none; /* Untuk Safari/Chrome lama */
+    -moz-appearance: none;    /* Untuk Firefox */
+}
+
+        .form-glass::-webkit-input-placeholder { color: var(--placeholder-color) !important; opacity: 0.8; }
+        .form-glass::-moz-placeholder { color: var(--placeholder-color) !important; opacity: 0.8; }
+        .form-glass:-ms-input-placeholder { color: var(--placeholder-color) !important; opacity: 0.8; }
+        .form-glass::-ms-input-placeholder { color: var(--placeholder-color) !important; opacity: 0.8; }
+        input, textarea, select { color: var(--text-main) !important; }
+        /* --- NEW: BACK TO TOP BUTTON --- */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            left: 30px; /* Di kiri agar tidak tabrakan sama tombol tema */
+            width: 50px; height: 50px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            z-index: 9990;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        #backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        #backToTop:hover { transform: translateY(-5px); background: var(--accent); }
+    
+        /* --- STYLING POPUP --- */
+        .popup-glass {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--bg-surface);
+            border: 1px solid var(--primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            z-index: 100000;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        /* Class untuk memunculkan popup */
+        .popup-glass.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
     </style>
 </head>
 <body>
 
     <div id="preloader">
         <div class="loader-content">
-            <div class="loader-text">INITIALIZING AMBATU_OPS</div>
+            <div class="loader-text">INITIALIZING AMBATECH</div>
             <div class="loader-bar">
                 <div class="loader-progress" id="progress"></div>
             </div>
@@ -330,6 +442,14 @@
         </div>
     </nav>
 
+    <div id="success-popup" class="popup-glass">
+        <div class="popup-content">
+            <i class="fas fa-check-circle text-success display-2 mb-3"></i>
+            <h3 style="color: var(--text-main);">Message Sent!</h3>
+            <p class="small text-muted mb-0">Terima kasih. Pesan Anda telah kami terima.</p>
+        </div>
+    </div>
+
     <section id="hero">
         <div class="container">
             <div class="row align-items-center">
@@ -342,13 +462,13 @@
                         <span class="text-gradient scramble-target">Intelligent Future</span>
                     </h1>
                     <p class="lead mb-5" style="max-width: 500px;">
-                        AmbatuOps memberdayakan bisnis Asia Tenggara melalui fusi Artificial Intelligence dan Cybersecurity tingkat militer yang adaptif.
+                        AmbaTech memberdayakan bisnis Asia Tenggara melalui fusi Artificial Intelligence dan Cybersecurity tingkat militer yang adaptif.
                     </p>
                     <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
                         <a href="#services" class="btn-glow hover-target">Explore Solutions</a>
-                        <button class="btn btn-outline-secondary rounded-pill px-4 py-3 hover-target" style="color: var(--text-main); border-color: var(--border-color);">
+                        <!-- <button class="btn btn-outline-secondary rounded-pill px-4 py-3 hover-target" style="color: var(--text-main); border-color: var(--border-color);">
                             Documentation
-                        </button>
+                        </button> -->
                     </div>
                 </div>
                 
@@ -358,7 +478,7 @@
                             <div class="dot" style="background:#ff5f56"></div>
                             <div class="dot" style="background:#ffbd2e"></div>
                             <div class="dot" style="background:#27c93f"></div>
-                            <span class="small terminal-filename ms-2">ambatu_guard.exe</span>
+                            <span class="small terminal-filename ms-2">amba_guard.exe</span>
                         </div>
                         <div class="terminal-body">
                             <div><span style="color:#c678dd">import</span> security_core</div>
@@ -402,7 +522,7 @@
                     <span class="text-primary fw-bold tracking-wider small">OUR PHILOSOPHY</span>
                     <h2 class="display-5 mt-2 mb-4">"Kecerdasan Terjamin.<br>Operasi Tepat Guna."</h2>
                     <p class="lead">
-                        AmbatuOps menyalurkan inovasi teknologi yang cerdas dan terjamin keamanannya untuk memastikan operasi bisnis klien mencapai potensi tertingginya.
+                        AmbaTech menyalurkan inovasi teknologi yang cerdas dan terjamin keamanannya untuk memastikan operasi bisnis klien mencapai potensi tertingginya.
                     </p>
                     <div class="row mt-5 g-4">
                         <div class="col-md-4">
@@ -501,7 +621,7 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
                         <div class="team-img-box">
-                            <img src="ro.jpeg" class="w-100 h-100 object-fit-cover">
+                            <img src="images/ro.jpeg" class="w-100 h-100 object-fit-cover">
                             <div class="team-social-overlay">
                                 <a href="https://www.linkedin.com/in/rois-azzam-shiddiq-73a81735a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-btn"><i class="fab fa-linkedin"></i></a>
                                 <a href="https://github.com/Roisazzshid" class="social-btn"><i class="fab fa-github"></i></a>
@@ -517,7 +637,7 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="150">
                     <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
                         <div class="team-img-box">
-                            <img src="ka.jpeg" class="w-100 h-100 object-fit-cover">
+                            <img src="images/ka.jpeg" class="w-100 h-100 object-fit-cover">
                             <div class="team-social-overlay">
                                 <a href="https://www.linkedin.com/in/muhammad-kamil-nf/" class="social-btn"><i class="fab fa-linkedin"></i></a>
                                 <a href="https://www.instagram.com/kamil_kamachiii" class="social-btn"><i class="fab fa-github"></i></a>
@@ -533,7 +653,7 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
                         <div class="team-img-box">
-                            <img src="rk.jpeg" class="w-100 h-100 object-fit-cover">
+                            <img src="images/rk.jpeg" class="w-100 h-100 object-fit-cover">
                             <div class="team-social-overlay">
                                 <a href="https://www.linkedin.com/in/raka-dwi-randika-a856b433a/" class="social-btn"><i class="fab fa-linkedin"></i></a>
                                 <a href="https://github.com/RakaDr" class="social-btn"><i class="fab fa-github"></i></a>
@@ -549,7 +669,7 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
                     <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
                         <div class="team-img-box">
-                            <img src="bi.jpg" class="w-100 h-100 object-fit-cover">
+                            <img src="images/bi.jpg" class="w-100 h-100 object-fit-cover">
                             <div class="team-social-overlay">
                                 <a href="https://www.linkedin.com/in/muhamad-bilal-fatiha-701542298/" class="social-btn"><i class="fab fa-linkedin"></i></a>
                                 <a href="https://github.com/Treesaken" class="social-btn"><i class="fab fa-github"></i></a>
@@ -565,7 +685,7 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
                         <div class="team-img-box">
-                            <img src="za.jpeg" class="w-100 h-100 object-fit-cover">
+                            <img src="images/za.jpeg" class="w-100 h-100 object-fit-cover">
                             <div class="team-social-overlay">
                                 <a href="https://www.linkedin.com/in/zaidaan-salman-saffiq-9622963a3/" class="social-btn"><i class="fab fa-linkedin"></i></a>
                                 <a href="https://github.com/zaidaansalman" class="social-btn"><i class="fab fa-github"></i></a>
@@ -581,7 +701,7 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="350">
                     <div class="glass-card text-center hover-target" data-tilt data-tilt-scale="1.05">
                         <div class="team-img-box">
-                            <img src="sy.jfif" class="w-100 h-100 object-fit-cover">
+                            <img src="images/sy.jfif" class="w-100 h-100 object-fit-cover">
                             <div class="team-social-overlay">
                                 <a href="https://www.linkedin.com/in/muhammad-hisyam-alfaris-61189032b/" class="social-btn"><i class="fab fa-linkedin"></i></a>
                                 <a href="https://github.com/Kavleri" class="social-btn"><i class="fab fa-github"></i></a>
@@ -598,11 +718,101 @@
         </div>
     </section>
 
+    <section class="py-5">
+        <div class="container">
+            <p class="text-center small text-uppercase tracking-wider text-muted mb-5" data-aos="fade-in">Trusted by Industry Leaders</p>
+            <div class="row g-4 justify-content-center align-items-center opacity-75">
+                <div class="col-4 col-md-2" data-aos="zoom-in" data-aos-delay="0">
+                    <div class="client-logo-item"><i class="fab fa-google"></i></div>
+                </div>
+                <div class="col-4 col-md-2" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="client-logo-item"><i class="fab fa-aws"></i></div>
+                </div>
+                <div class="col-4 col-md-2" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="client-logo-item"><i class="fab fa-microsoft"></i></div>
+                </div>
+                <div class="col-4 col-md-2" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="client-logo-item"><i class="fab fa-meta"></i></div>
+                </div>
+                <div class="col-4 col-md-2" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="client-logo-item"><i class="fab fa-stripe"></i></div>
+                </div>
+                <div class="col-4 col-md-2" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="client-logo-item"><i class="fab fa-airbnb"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 my-5" id="contact-form-section">
+        <div class="container">
+            <div class="glass-card text-start p-5" data-tilt data-tilt-max="2">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+                        <span class="text-primary fw-bold tracking-wider small">GET IN TOUCH</span>
+                        <h2 class="display-5 mb-4">Ready to Secure Your <span class="text-gradient">Infrastructure?</span></h2>
+                        <p class="lead mb-4">Tim ahli kami siap memberikan konsultasi gratis untuk kebutuhan keamanan dan AI perusahaan Anda.</p>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-box" style="width: 50px; height: 50px; margin-bottom: 0;">
+                                <i class="fas fa-envelope text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0 text-main">Email Us</h6>
+                                <p class="small mb-0">hello@ambatech.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="icon-box" style="width: 50px; height: 50px; margin-bottom: 0;">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0 text-main">Visit Us</h6>
+                                <p class="small mb-0">Lenteng Agung, Jakarta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6" data-aos="fade-left">
+                        <form action="#" method="POST" id="contactForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="text" name="name" class="form-control form-glass" placeholder="Your Name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" name="email" class="form-control form-glass" placeholder="Your Email" required>
+                                </div>
+                                <div class="col-12">
+                                    <select name="service" class="form-select form-glass">
+                                        <option selected>Select Service</option>
+                                        <option value="AI Solution">AI Solution</option>
+                                        <option value="Cyber Audit">Cybersecurity Audit</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <textarea name="message" class="form-control form-glass" rows="4" placeholder="Message..." required></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn-glow w-100 py-3 hover-target">Send Message <i class="fas fa-paper-plane ms-2"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <button id="backToTop" class="hover-target" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <footer id="contact">
         <div class="container">
             <div class="row g-5">
                 <div class="col-lg-5">
-                    <h4 class="mb-4">AmbatuOps<span class="text-primary">.</span></h4>
+                    <h4 class="mb-4">AmbaTech<span class="text-primary">.</span></h4>
                     <p class="small text-muted">Lenteng Agung, Jakarta, Indonesia.<br>Pioneering the future of secure cloud computing.</p>
                 </div>
                 <div class="col-lg-3">
@@ -647,7 +857,7 @@
             "Initializing Neural Core...",
             "Handshaking with Cloud Nodes...",
             "Verifying Security Protocols...",
-            "Loading AmbatuOps Interface..."
+            "Loading AmbaTech Interface..."
         ];
 
         let step = 0;
@@ -900,7 +1110,68 @@
 
         initParticles(savedTheme);
         animateCanvas();
+        // --- 7. BACK TO TOP LOGIC ---
+        const backToTopBtn = document.getElementById('backToTop');
 
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // --- 8. SCROLL SPY (NAVBAR HIGHLIGHT) ---
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 200)) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(li => {
+        li.classList.remove('text-primary'); // Hapus warna aktif lama
+        li.classList.add('text-muted'); // Kembalikan ke warna default
+        if (li.getAttribute('href').includes(current)) {
+            li.classList.remove('text-muted');
+            li.classList.add('text-primary'); // Beri warna aktif
+        }
+    });
+});
+
+// --- LOGIKA POPUP SUBMIT ---
+const contactForm = document.getElementById('contactForm');
+        const successPopup = document.getElementById('success-popup');
+
+        if(contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Mencegah halaman refresh
+                
+                // 1. Munculkan popup
+                successPopup.classList.add('show');
+                
+                // 2. Reset form (kosongkan input)
+                contactForm.reset();
+
+                // 3. Hilangkan popup otomatis setelah 3 detik
+                setTimeout(() => {
+                    successPopup.classList.remove('show');
+                }, 3000);
+            });
+        }
     </script>
 </body>
 </html>
