@@ -61,19 +61,16 @@ Menjadi pemimpin keamanan untuk SME & ekspansi pasar SaaS.
 - GitHub Pages untuk development preview
 
 ---
-
 ## Struktur Tim
 
 | Foto | Nama | Posisi | Peran Utama |
 |---:|---|---|---|
-| ![Rois](images/ro.jpeg){width="40"} | Rois Azzam Shiddiq | CEO | Strategi & Visi |
-| ![Kamil](images/ka.jpeg){width="40"} | Muhammad Kamil | CTO | Arsitektur Teknologi |
-| ![Raka](images/rk.jpeg){width="40"} | Raka Dwi Randika | COO | Operasional Harian |
-| ![Bilal](images/bi.jpg){width="40"} | Muhamad Bilal Fatiha | CPO | Pengembangan Produk |
-| ![Zaidaan](images/za.jpeg){width="40"} | Zaidaan Salman | Head of BD | Kemitraan Strategis |
-| ![Hisyam](images/sy.jfif){width="40"} | M. Hisyam Alfaris | Head of Cyber | Keamanan Siber |
-
-> Pastikan semua file gambar tersedia di folder `images/`.
+| <img src="images/ro.jpeg" alt="Rois" width="40"> | Rois Azzam Shiddiq | CEO | Strategi & Visi |
+| <img src="images/ka.jpeg" alt="Kamil" width="40"> | Muhammad Kamil | CTO | Arsitektur Teknologi |
+| <img src="images/rk.jpeg" alt="Raka" width="40"> | Raka Dwi Randika | COO | Operasional Harian |
+| <img src="images/bi.jpg" alt="Bilal" width="40"> | Muhamad Bilal Fatiha | CPO | Pengembangan Produk |
+| <img src="images/za.jpeg" alt="Zaidaan" width="40"> | Zaidaan Salman | Head of BD | Kemitraan Strategis |
+| <img src="images/sy.jfif" alt="Hisyam" width="40"> | M. Hisyam Alfaris | Head of Cyber | Keamanan Siber |
 
 ---
 
