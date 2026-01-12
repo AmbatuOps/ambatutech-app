@@ -401,6 +401,25 @@
             visibility: visible;
             transform: translate(-50%, -50%) scale(1);
         }
+        /* --- FIX: STABILIZE SCRAMBLE TEXT ON MOBILE --- */
+        .scramble-target {
+            display: inline-block; /* Agar kita bisa atur tinggi/lebarnya */
+            min-height: 1.2em;     /* Cadangkan tinggi minimal 1 baris lebih */
+            vertical-align: bottom; /* Jaga posisi tetap sejajar */
+        }
+
+        @media (max-width: 991px) {
+            .scramble-target {
+                /* Khusus Mobile: Jika teks panjang jadi 2 baris, cadangkan tinggi lebih besar */
+                min-height: 2.4rem; 
+                display: block; /* Pastikan dia mengisi lebar penuh agar stabil */
+            }
+            
+            /* Opsional: Kecilkan sedikit font hero di HP agar muat 1 baris */
+            h1.display-3 {
+                font-size: 2.2rem !important; 
+            }
+        }
     </style>
 </head>
 <body>
@@ -865,7 +884,7 @@
                     </div>
 
                     <div class="col-lg-6" data-aos="fade-left">
-                        <form action="#" method="POST" id="contactForm">
+                        <form action="https://formspree.io/f/mpqqanjd" method="POST" id="contactForm">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <input type="text" name="name" class="form-control form-glass" placeholder="Your Name" required>
@@ -993,7 +1012,7 @@
         class TextScramble {
             constructor(el) {
                 this.el = el;
-                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.chars = '!<>-\/[]{}=+*^?#';
                 this.update = this.update.bind(this);
             }
             setText(newText) {
@@ -1241,25 +1260,47 @@ window.addEventListener('scroll', () => {
         }
     });
 });
-
-// --- LOGIKA POPUP SUBMIT ---
+// --- 9. FORM SUBMIT POPUP LOGIC (INTEGRATED WITH FORMSPREE) ---
 const contactForm = document.getElementById('contactForm');
         const successPopup = document.getElementById('success-popup');
 
         if(contactForm) {
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault(); // Mencegah halaman refresh
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault(); // Mencegah reload halaman
                 
-                // 1. Munculkan popup
-                successPopup.classList.add('show');
+                // Ambil data form
+                const formData = new FormData(contactForm);
                 
-                // 2. Reset form (kosongkan input)
-                contactForm.reset();
+                try {
+                    // Kirim data ke Formspree secara background (AJAX)
+                    const response = await fetch(contactForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
 
-                // 3. Hilangkan popup otomatis setelah 3 detik
-                setTimeout(() => {
-                    successPopup.classList.remove('show');
-                }, 3000);
+                    if (response.ok) {
+                        // JIKA BERHASIL TERKIRIM:
+                        // 1. Munculkan popup sukses
+                        successPopup.classList.add('show');
+                        
+                        // 2. Reset form (kosongkan input)
+                        contactForm.reset();
+
+                        // 3. Hilangkan popup otomatis setelah 3 detik
+                        setTimeout(() => {
+                            successPopup.classList.remove('show');
+                        }, 3000);
+                    } else {
+                        // JIKA GAGAL (misal salah setting email)
+                        alert("Oops! Ada masalah saat mengirim pesan. Silakan coba lagi.");
+                    }
+                } catch (error) {
+                    // JIKA ERROR KONEKSI
+                    alert("Terjadi kesalahan koneksi internet.");
+                }
             });
         }
     </script>
